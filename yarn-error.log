@@ -1,0 +1,49 @@
+Arguments: 
+  /opt/homebrew/Cellar/node/19.6.0/bin/node /opt/homebrew/bin/yarnpkg install
+
+PATH: 
+  /Users/bazil/google-cloud-sdk/bin:/Users/bazil/mambaforge/bin:/Users/bazil/mambaforge/condabin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/bazil/Library/Android/sdk/emulator:/Users/bazil/Library/Android/sdk/platform-tools
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  19.6.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/jsc-android/-/jsc-android-250231.0.0.tgz: ETIMEDOUT
+      at Timeout._onTimeout (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:141550:19)
+      at listOnTimeout (node:internal/timers:568:17)
+      at process.processTimers (node:internal/timers:511:7)
+
+npm manifest: 
+  {
+    "name": "mobot",
+    "version": "1.0.0",
+    "main": "node_modules/expo/AppEntry.js",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web"
+    },
+    "dependencies": {
+      "expo": "~48.0.18",
+      "expo-status-bar": "~1.4.4",
+      "react": "18.2.0",
+      "react-native": "0.71.8"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.20.0"
+    },
+    "private": true
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
