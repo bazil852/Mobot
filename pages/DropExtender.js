@@ -1,0 +1,234 @@
+// App.js
+
+import React, { useState,useEffect } from 'react';
+import { StyleSheet, View, Text, Button, PanResponder, Modal,Dimensions,Image,TouchableOpacity } from 'react-native';
+import { KorolJoystick } from "korol-joystick";
+import Grid from '../components/Grid';
+
+
+export default function DropExtender({ navigation }) {
+  const [extenders, setExtenders] = useState([]);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [modalVisible, setModalVisible] = useState(false);
+  const blockSize = 10;
+  
+  const handleJoystickMove = (dx, dy) => {
+    setPosition(prevPosition => ({
+      x: prevPosition.x + dx/10,
+      y: prevPosition.y - dy/10
+    }));
+  };
+
+
+  return (
+    <View style={styles.container}>
+       <Image source={require('../assets/premapVector.png')} style={styles.backgroundImage}></Image>
+       <View style={styles.header}>
+      <Text style={styles.title}>Place Extender</Text>
+      <Text style={styles.subtitle}>A device that enhances the reach or coverage of a network connection.</Text>
+      </View>
+      
+      <View style={styles.grid} >
+      <Grid numberOfBlocks={((Dimensions.get('window').width - 40) / blockSize)} />
+        {/* Render the lawn mower */}
+        <View style={[styles.robot, { transform: [{translateX: position.x}, {translateY: position.y}] }]} >
+            <Image source={require('../assets/Robot.png')}></Image>
+        </View>
+
+
+        
+        {/* Render the extenders */}
+        {extenders.map((extender, index) => (
+          <View key={index} style={[styles.extender, extender]} />
+        ))}
+      </View>
+
+      <KorolJoystick 
+      style={{marginTop:45,marginBottom:15}}
+  color="#294D61" 
+  radius={55} 
+  onMove={(data) => {
+    console.log("Joystick dx:", data.position.x);
+    handleJoystickMove(data.position.x, data.position.y);
+  }}
+/>
+{/* <Button 
+    title="Reset Position" 
+    onPress={() => setPosition({ x: 0, y: 0 })}
+/> */}
+  
+  <View style={styles.buttonContainer}>
+{
+  extenders.length < 2 ? (
+    <TouchableOpacity 
+      style={styles.confirmButton}
+      onPress={() => {
+        setExtenders([...extenders, position]);
+      }}
+    >
+      <Text style={styles.buttonTextCon}>Place Extendeer</Text>
+    </TouchableOpacity>
+  ) : (
+    <TouchableOpacity 
+      style={styles.confirmButton}
+      // onPress={() => {
+      //   navigation.navigate('Premap');
+      // }}
+      onPress={() => setModalVisible(true)}
+    >
+      <Text style={styles.buttonTextCon}>Confirm</Text>
+    </TouchableOpacity>
+  )
+}
+</View>
+
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Image source={require('../assets/bg-sign.png')} style={styles.modalIcon} />
+            <Text style={styles.modalTitle}>Save Settings</Text>
+            <Text style={styles.modalText}>Save you settings before moving to next step!</Text>
+            <TouchableOpacity 
+              style={styles.confirmButton}
+              onPress={() => {
+                navigation.navigate('Premap');
+              }}
+              
+            >
+              <Text style={styles.buttonTextCon}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // Removed justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#05161A',
+  },
+  backgroundImage: {
+    resizeMode: 'cover', 
+    position: 'absolute',
+    width: '100%',  // adjusted to 100% for full width
+    height: '35%',  // you can adjust this height as per your requirement
+    top: 0,  // set top to 0
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 50,
+    marginBottom: 30,
+    paddingLeft:40,
+    paddingRight:40
+  },
+  title: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#A5A5A5',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  grid: {
+    width: Dimensions.get('window').width - 40,
+    height: Dimensions.get('window').width - 40,
+    // borderWidth: 1,
+    // borderColor: 'gray',
+    backgroundColor: 'transparent',
+    zIndex:999,
+    marginBottom: 20
+  },
+  robot: {
+    width: 50, // or your preferred size
+    height: 50, // or your preferred size
+    backgroundColor: 'transparent', // or your preferred color
+    position: 'absolute',
+    top: '50%', // Start from the center of the grid
+    left: '50%', // Start from the center of the grid
+    transform: [{ translateX: -25 }, { translateY: -25 }], // Center the robot in the start position
+  },
+  extender: {
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    backgroundColor: 'green',
+    borderRadius: 10,
+  },
+  joystick: {
+    width: 80,
+    height: 80,
+    backgroundColor: 'lightgray',
+    borderRadius: 40,
+    margin: 20,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: '#0F969C',
+    fontWeight:700
+  },
+  confirmButton: {
+    width: '100%', // Make the button full width
+    backgroundColor: '#0F969C',
+    borderRadius: 0, // Set to 0 for full-width buttons to avoid curved corners at the screen edge
+    paddingVertical: 15, // Adjust padding to your preference
+    justifyContent: 'center', // This ensures the text is centered vertically
+    alignItems: 'center', // This ensures the text is centered horizontally
+  },
+  buttonTextCon: {
+    fontSize: 16,
+    color: 'white',
+    textAlign: 'center', // Ensure text is centered
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "#05161A",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalIcon: {
+
+  },
+  modalTitle: {
+    fontSize: 24,
+    marginBottom: 15,
+    marginTop:15,
+    textAlign: "center",
+    color:'#FFFFFF'
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    color:'#FFFFFF'
+  },
+   buttonContainer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+  },
+});
